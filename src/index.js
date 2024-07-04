@@ -1,0 +1,1 @@
+alert('Webpack files have been structured properly!')

@@ -1,0 +1,25 @@
+{
+  "name": "todo-list",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/agbrkma/todo-list.git"
+  },
+  "author": "Agbor Kima",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/agbrkma/todo-list/issues"
+  },
+  "homepage": "https://github.com/agbrkma/todo-list#readme",
+  "dependencies": {
+    "webpack": "^5.92.1"
+  },
+  "devDependencies": {
+    "webpack-cli": "^5.1.4"
+  }
+}
