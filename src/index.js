@@ -1,10 +1,10 @@
 class Todo {
-        constructor(title, description, dueDate, priority) {
-            this.title = title,
+    constructor(title, description, dueDate, priority) {
+        this.title = title,
             this.description = description,
             this.dueDate = dueDate,
             this.priority = priority
-        }
+    }
 }
 
 class Project {
@@ -23,7 +23,7 @@ class Project {
     }
 }
 
-const allProjects = []
+const allProjects = [];
 
 const createNewTodo = () => {
 
@@ -50,21 +50,31 @@ const showTodos = () => {
 }
 
 
-function createNewProject() {
+const createNewProject = () => {
     //change to some type of form
     const name = prompt('enter project name')
     const project = new Project(name, [])
     allProjects.push(project)
+}
 
-    const newProject = document.createElement('h4')
-    newProject.textContent = name
-    newProject.classList.add('project')
-    projectsDiv.append(newProject)
+const showProjects = () => {
+
+    allProjects.map(project => {
+        const newProject = document.createElement('h4')
+        newProject.textContent = project.name
+        newProject.classList.add('project')
+        projectsDiv.append(newProject)
+    })
     console.log(allProjects)
 }
 
+
 const addProjectBtn = document.getElementById('addProject')
-addProjectBtn.addEventListener('click', () => createNewProject())
+addProjectBtn.addEventListener('click', () => {
+    createNewProject()
+    projectsDiv.innerHTML = ''
+    showProjects()
+})
 
 const addTodoBtn = document.getElementById('addTodo')
 addTodoBtn.addEventListener('click', () => {
@@ -74,9 +84,9 @@ addTodoBtn.addEventListener('click', () => {
 
 })
 
-const todosDiv = document.getElementById('todos-div')
+const todosDiv = document.getElementById('todos-list')
 
-const projectsDiv = document.getElementById('projects-div')
+const projectsDiv = document.getElementById('projects-list')
 projectsDiv.addEventListener('click', (e) => {
     allProjects.forEach(proj => {
         proj.selected = false
@@ -90,9 +100,7 @@ projectsDiv.addEventListener('click', (e) => {
             clickedProject.setAttribute('style', 'background-color: green')
         }
 
-        else if(clickedProject.textContent !== allProjects[i].name){
-            clickedProject.setAttribute('style', 'background-color: azure;')
-        }
+
     }
     console.log(allProjects)
 })
