@@ -5,14 +5,17 @@ class Todo {
             this.dueDate = dueDate,
             this.priority = priority
     }
+    editTodo(){
+        this.title = prompt('New Title')
+    }
     
 }
 
 class Project {
-    constructor(name) {
+    constructor(name, todos, selected) {
         this.name = name
-        this.todos = []
-        this.selected = false
+        this.todos = todos
+        this.selected = selected
     }
     setSelected() {
         this.selected = true
@@ -31,7 +34,7 @@ class Project {
     }
 }
 
-const allProjects = [];
+const allProjects = [new Project('Project 1', [new Todo('Project 1 todo', 'The first todo of your first project','Due 8/24/2024', 'High')], true)];
 
 const createNewTodo = () => {
 
@@ -121,4 +124,9 @@ projectsDiv.addEventListener('click', (e) => {
         }
     }
     console.log(allProjects)
+})
+
+window.addEventListener('load', () => {
+    showProjects()
+    showTodos()
 })
