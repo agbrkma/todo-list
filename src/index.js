@@ -5,6 +5,7 @@ class Todo {
             this.dueDate = dueDate,
             this.priority = priority
     }
+    
 }
 
 class Project {
@@ -21,6 +22,13 @@ class Project {
         const todo = new Todo(title, description, dueDate, priority)
         this.todos.push(todo)
     }
+
+    deleteTodo(todoTitle) {
+        const selectedProject = allProjects.find(proj => proj.selected === true)
+        const deleteIndex = selectedProject.todos.findIndex(todo => todo.title === todoTitle)
+        selectedProject.todos.splice(deleteIndex, 1)
+        showTodos()
+    }
 }
 
 const allProjects = [];
@@ -33,17 +41,28 @@ const createNewTodo = () => {
             allProjects[i].addTodo(prompt('Title'), prompt('Description'), prompt('Due Date'), prompt('Priority'))
         }
     }
-
 }
 
 const showTodos = () => {
+    todosDiv.innerHTML = ''
     allProjects.map(project => {
         project.selected ?
             project.todos.forEach(todo => {
-                const singleTodo = document.createElement('div')
+                const wholeTodo = document.createElement('div')
+                wholeTodo.classList.add('todo') 
                 const item = document.createElement('h4')
                 item.textContent = todo.title
-                todosDiv.append(item)
+                const deleteBtn = document.createElement('button')
+                deleteBtn.textContent = 'X'
+                deleteBtn.classList.add('delete-btn')
+                deleteBtn.addEventListener('click', () => {
+                    project.deleteTodo(todo.title)
+                })
+                
+                wholeTodo.append(item)
+                wholeTodo.append(deleteBtn)
+
+                todosDiv.append(wholeTodo)
             }) : project
     })
 
@@ -58,7 +77,7 @@ const createNewProject = () => {
 }
 
 const showProjects = () => {
-
+    projectsDiv.innerHTML = ''
     allProjects.map(project => {
         const newProject = document.createElement('h4')
         newProject.textContent = project.name
@@ -72,14 +91,14 @@ const showProjects = () => {
 const addProjectBtn = document.getElementById('addProject')
 addProjectBtn.addEventListener('click', () => {
     createNewProject()
-    projectsDiv.innerHTML = ''
+    
     showProjects()
 })
 
 const addTodoBtn = document.getElementById('addTodo')
 addTodoBtn.addEventListener('click', () => {
-
     createNewTodo()
+    showTodos()
     console.log(allProjects)
 
 })
@@ -92,15 +111,14 @@ projectsDiv.addEventListener('click', (e) => {
         proj.selected = false
     })
 
-    // console.log(e.target.closest('h4').textContent)
     const clickedProject = e.target.closest('h4')
     for (let i = 0; i < allProjects.length; i++) {
         if (allProjects[i].name === clickedProject.textContent) {
-            allProjects[i].setSelected()
+            allProjects[i].setSelected()   
+            showProjects()
+            showTodos()
             clickedProject.setAttribute('style', 'background-color: green')
         }
-
-
     }
     console.log(allProjects)
 })
