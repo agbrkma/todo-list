@@ -6,7 +6,11 @@ class Todo {
             this.priority = priority
     }
     editTodo(){
-        this.title = prompt('New Title')
+        this.title = prompt(`${this.title}`)
+        this.description = prompt(`${this.description}`)
+        this.dueDate = prompt(`${this.dueDate}`)
+        this.priority = prompt(`${this.priority}`)
+        showTodos()
     }
     
 }
@@ -34,10 +38,9 @@ class Project {
     }
 }
 
-const allProjects = [new Project('Project 1', [new Todo('Project 1 todo', 'The first todo of your first project','Due 8/24/2024', 'High')], true)];
+const allProjects = [new Project('Project 1', [new Todo('Project 1 todo', 'The first todo of your first project', 'Due 8/24/2024', 'High')], true)];
 
 const createNewTodo = () => {
-
     for (let i = 0; i < allProjects.length; i++) {
         if (allProjects[i].selected === true) {
 
@@ -54,17 +57,46 @@ const showTodos = () => {
                 const wholeTodo = document.createElement('div')
                 wholeTodo.classList.add('todo') 
                 const item = document.createElement('h4')
-                item.textContent = todo.title
+                item.textContent = `${todo.title} Due: ${todo.dueDate}`
+                const editBtn = document.createElement('button')
+                editBtn.textContent = 'Edit';
+                editBtn.classList.add('edit-btn')
+                editBtn.addEventListener('click', () => {
+                    todo.editTodo()
+                })
                 const deleteBtn = document.createElement('button')
                 deleteBtn.textContent = 'X'
                 deleteBtn.classList.add('delete-btn')
                 deleteBtn.addEventListener('click', () => {
                     project.deleteTodo(todo.title)
                 })
+                const showDetails = document.createElement('button')
+                showDetails.innerHTML = '&#8595'
+                showDetails.classList.add('show-details')
+
+                showDetails.addEventListener('click', () => {
+                    console.log('clicked show details')
+                    const desc = document.createElement('div')
+                    desc.textContent = todo.description
+                    desc.classList.add('desc')
+                    const closeBtn = document.createElement('button')
+                    closeBtn.textContent = 'x'
+                    closeBtn.className = 'close-desc'
+                    desc.append(closeBtn)
+                    if(!wholeTodo.classList.contains(desc)){
+                        console.log('doesnt have desc')
+                        desc.style.display === 'block'
+                        wholeTodo.append(desc)
+                    }
+                    closeBtn.addEventListener('click', () => {
+                        desc.parentNode.removeChild(desc)
+                    })
+                })
                 
                 wholeTodo.append(item)
+                wholeTodo.append(editBtn)
+                wholeTodo.append(showDetails)
                 wholeTodo.append(deleteBtn)
-
                 todosDiv.append(wholeTodo)
             }) : project
     })
@@ -73,7 +105,6 @@ const showTodos = () => {
 
 
 const createNewProject = () => {
-    //change to some type of form
     const name = prompt('enter project name')
     const project = new Project(name, [])
     allProjects.push(project)
@@ -87,14 +118,12 @@ const showProjects = () => {
         newProject.classList.add('project')
         projectsDiv.append(newProject)
     })
-    console.log(allProjects)
 }
 
 
 const addProjectBtn = document.getElementById('addProject')
 addProjectBtn.addEventListener('click', () => {
     createNewProject()
-    
     showProjects()
 })
 
