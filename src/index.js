@@ -1,3 +1,21 @@
+
+
+window.addEventListener('load', () => {
+    showProjects()
+    showTodos()
+})
+
+function saveProjectsToLocalStorage(projectArr){
+    localStorage.setItem('allProjects', JSON.stringify(projectArr.map(project => project.toJSON())))
+}
+
+function  getProjectsFromLocalStorage(){
+    const plainProjects = JSON.parse(localStorage.getItem('allProjects'))
+    const remadeProjects = plainProjects.map(project => Project.fromJSON(project))
+    return remadeProjects
+}
+
+
 class Todo {
     constructor(title, description, dueDate, priority) {
         this.title = title,
@@ -10,9 +28,24 @@ class Todo {
         this.description = prompt(`${this.description}`)
         this.dueDate = prompt(`${this.dueDate}`)
         this.priority = prompt(`${this.priority}`)
+
+        saveProjectsToLocalStorage(allProjects)
+
         showTodos()
     }
+
+    toJSON(){
+        return {
+            title: this.title,
+            description: this.description,
+            dueDate: this.dueDate,
+            priority: this.priority
+        }
+    }
     
+    static fromJSON(json){
+        return Object.assign(new Todo(), json)
+    }
 }
 
 class Project {
@@ -28,17 +61,38 @@ class Project {
     addTodo(title, description, dueDate, priority) {
         const todo = new Todo(title, description, dueDate, priority)
         this.todos.push(todo)
+        
+        saveProjectsToLocalStorage(allProjects)
+
     }
 
     deleteTodo(todoTitle) {
         const selectedProject = allProjects.find(proj => proj.selected === true)
         const deleteIndex = selectedProject.todos.findIndex(todo => todo.title === todoTitle)
         selectedProject.todos.splice(deleteIndex, 1)
+    
+        saveProjectsToLocalStorage(allProjects)
+
         showTodos()
+    }
+
+    toJSON() {
+        return {
+            name: this.name,
+            selected: this.selected,
+            todos: this.todos.map(todo => todo.toJSON())
+        };
+    }
+
+    static fromJSON(json) {
+        const todos = json.todos.map(todoJson => Todo.fromJSON(todoJson))
+        return Object.assign(new Project(), {...json, todos})
     }
 }
 
-const allProjects = [new Project('Project 1', [new Todo('Project 1 todo', 'The first todo of your first project', 'Due 8/24/2024', 'High')], true)];
+
+const allProjects = getProjectsFromLocalStorage()
+
 
 const createNewTodo = () => {
     for (let i = 0; i < allProjects.length; i++) {
@@ -47,11 +101,13 @@ const createNewTodo = () => {
             allProjects[i].addTodo(prompt('Title'), prompt('Description'), prompt('Due Date'), prompt('Priority'))
         }
     }
+    saveProjectsToLocalStorage(allProjects)
 }
 
 const showTodos = () => {
-    todosDiv.innerHTML = ''
-    allProjects.map(project => {
+    const projects = getProjectsFromLocalStorage()
+    todosDiv.innerHTML = '';
+    projects.map(project => {
         project.selected ?
             project.todos.forEach(todo => {
                 const wholeTodo = document.createElement('div')
@@ -84,8 +140,6 @@ const showTodos = () => {
                     closeBtn.className = 'close-desc'
                     desc.append(closeBtn)
                     if(!wholeTodo.classList.contains(desc)){
-                        console.log('doesnt have desc')
-                        desc.style.display === 'block'
                         wholeTodo.append(desc)
                     }
                     closeBtn.addEventListener('click', () => {
@@ -106,13 +160,15 @@ const showTodos = () => {
 
 const createNewProject = () => {
     const name = prompt('enter project name')
-    const project = new Project(name, [])
+    const project = new Project(name, [], false)
     allProjects.push(project)
+    saveProjectsToLocalStorage(allProjects)
 }
 
 const showProjects = () => {
+    const projects = getProjectsFromLocalStorage()
     projectsDiv.innerHTML = ''
-    allProjects.map(project => {
+    projects.map(project => {
         const newProject = document.createElement('h4')
         newProject.textContent = project.name
         newProject.classList.add('project')
@@ -131,31 +187,27 @@ const addTodoBtn = document.getElementById('addTodo')
 addTodoBtn.addEventListener('click', () => {
     createNewTodo()
     showTodos()
-    console.log(allProjects)
-
 })
 
 const todosDiv = document.getElementById('todos-list')
-
 const projectsDiv = document.getElementById('projects-list')
+
 projectsDiv.addEventListener('click', (e) => {
     allProjects.forEach(proj => {
         proj.selected = false
     })
+    
 
     const clickedProject = e.target.closest('h4')
     for (let i = 0; i < allProjects.length; i++) {
         if (allProjects[i].name === clickedProject.textContent) {
-            allProjects[i].setSelected()   
+            allProjects[i].selected = true   
+
+            saveProjectsToLocalStorage(allProjects)
+
             showProjects()
             showTodos()
-            clickedProject.setAttribute('style', 'background-color: green')
         }
-    }
-    console.log(allProjects)
+    }   
 })
 
-window.addEventListener('load', () => {
-    showProjects()
-    showTodos()
-})
